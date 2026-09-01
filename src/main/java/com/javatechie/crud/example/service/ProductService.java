@@ -1,6 +1,7 @@
 package com.javatechie.crud.example.service;
 
 import com.javatechie.crud.example.entity.Product;
+import com.javatechie.crud.example.exception.ProductNotFoundException;
 import com.javatechie.crud.example.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ public class ProductService {
     }
 
     public Product getProductById(int id) {
-        return repository.findById(id).orElse(null);
+        return repository.findById(id).orElseThrow(() -> new ProductNotFoundException(id));
     }
 
     public Product getProductByName(String name) {
@@ -38,7 +39,8 @@ public class ProductService {
     }
 
     public Product updateProduct(Product product) {
-        Product existingProduct = repository.findById(product.getId()).orElse(null);
+        Product existingProduct = repository.findById(product.getId())
+                .orElseThrow(() -> new ProductNotFoundException(product.getId()));
         existingProduct.setName(product.getName());
         existingProduct.setQuantity(product.getQuantity());
         existingProduct.setPrice(product.getPrice());
