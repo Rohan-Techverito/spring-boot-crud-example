@@ -8,6 +8,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 
 @Data
 @AllArgsConstructor
@@ -19,7 +22,13 @@ public class Product {
     @Id
     @GeneratedValue
     private int id;
+
+    @NotBlank
     private String name;
+
+    @Min(0)
     private int quantity;
+
+    @DecimalMin("0")
     private double price;
 }
