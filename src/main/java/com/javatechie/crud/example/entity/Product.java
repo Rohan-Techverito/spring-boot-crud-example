@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
@@ -29,6 +28,6 @@ public class Product {
     @Min(0)
     private int quantity;
 
-    @DecimalMin("0")
+    @Min(0)
     private double price;
 }
