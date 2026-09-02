@@ -21,13 +21,10 @@ public class Product {
     @Id
     @GeneratedValue
     private int id;
-
     @NotBlank
     private String name;
-
     @Min(0)
     private int quantity;
-
     @Min(0)
     private double price;
 }

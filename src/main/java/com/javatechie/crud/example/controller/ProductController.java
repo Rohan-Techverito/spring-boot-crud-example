@@ -4,7 +4,6 @@ import com.javatechie.crud.example.entity.Product;
 import com.javatechie.crud.example.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -17,9 +16,9 @@ public class ProductController {
     private ProductService service;
 
     @PostMapping("/addProduct")
-    public ResponseEntity<Product> addProduct(@Valid @RequestBody Product product) {
-        Product savedProduct = service.saveProduct(product);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
+    @ResponseStatus(HttpStatus.CREATED)
+    public Product addProduct(@Valid @RequestBody Product product) {
+        return service.saveProduct(product);
     }
 
     @PostMapping("/addProducts")

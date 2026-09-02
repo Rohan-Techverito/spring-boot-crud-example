@@ -11,13 +11,15 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ProductController.class)
-public class ProductControllerTest {
+class ProductControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -25,22 +27,23 @@ public class ProductControllerTest {
     @MockBean
     private ProductService service;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
-    public void addProduct_withInvalidPayload_returnsBadRequest() throws Exception {
+    void addProduct_withInvalidPayload_returns400WithErrors() throws Exception {
         Product invalidProduct = new Product(0, "", -1, -10.0);
 
         mockMvc.perform(post("/addProduct")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidProduct)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errors").exists());
+                .andExpect(jsonPath("$.errors").isArray());
     }
 
     @Test
-    public void addProduct_withValidPayload_returnsCreated() throws Exception {
-        Product validProduct = new Product(1, "Laptop", 10, 55000.0);
+    void addProduct_withValidPayload_returns201AndSavedProduct() throws Exception {
+        Product validProduct = new Product(1, "Laptop", 5, 999.99);
 
         when(service.saveProduct(any(Product.class))).thenReturn(validProduct);
 
@@ -48,8 +51,11 @@ public class ProductControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validProduct)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value("Laptop"))
-                .andExpect(jsonPath("$.quantity").value(10))
-                .andExpect(jsonPath("$.price").value(55000.0));
+                .andExpect(jsonPath("$.id").value(validProduct.getId()))
+                .andExpect(jsonPath("$.name").value(validProduct.getName()))
+                .andExpect(jsonPath("$.quantity").value(validProduct.getQuantity()))
+                .andExpect(jsonPath("$.price").value(validProduct.getPrice()));
+
+        verify(service, times(1)).saveProduct(any(Product.class));
     }
 }
