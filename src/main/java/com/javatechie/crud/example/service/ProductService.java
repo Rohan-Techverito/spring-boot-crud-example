@@ -41,11 +41,11 @@ public class ProductService {
     public Product updateProduct(Product product) {
         Product existingProduct = repository.findById(product.getId())
                 .orElseThrow(() -> new ProductNotFoundException(product.getId()));
+
         existingProduct.setName(product.getName());
         existingProduct.setQuantity(product.getQuantity());
         existingProduct.setPrice(product.getPrice());
+
         return repository.save(existingProduct);
     }
-
-
 }
