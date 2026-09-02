@@ -72,4 +72,13 @@ class ProductServiceTest {
 
         assertThrows(ProductNotFoundException.class, () -> service.getProductById(99));
     }
+
+    @Test
+    void getProductById_withZeroOrNegativeId_throwsProductNotFoundException() {
+        when(repository.findById(0)).thenReturn(Optional.empty());
+        when(repository.findById(-1)).thenReturn(Optional.empty());
+
+        assertThrows(ProductNotFoundException.class, () -> service.getProductById(0));
+        assertThrows(ProductNotFoundException.class, () -> service.getProductById(-1));
+    }
 }
